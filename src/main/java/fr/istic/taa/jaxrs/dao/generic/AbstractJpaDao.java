@@ -6,7 +6,7 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 
-public abstract class AbstractJpaDao<K, T extends Serializable> implements IGenericDao<K, T> {
+public abstract class AbstractJpaDao<K, T extends Serializable> implements GenericDao<K, T> {
 
 	private Class<T> clazz;
 
