@@ -1,7 +1,11 @@
 package fr.istic.taa.jaxrs.mapper;
 
 import fr.istic.taa.jaxrs.DTO.TicketDTO;
+import fr.istic.taa.jaxrs.Domain.Concert;
 import fr.istic.taa.jaxrs.Domain.Ticket;
+import fr.istic.taa.jaxrs.Domain.Utilisateur;
+import fr.istic.taa.jaxrs.dao.DomainDAO.ConcertDao;
+import fr.istic.taa.jaxrs.dao.DomainDAO.UtilisateurDao;
 
 public class TicketMapper {
     private static final ConcertDao concertDao = new ConcertDao();
