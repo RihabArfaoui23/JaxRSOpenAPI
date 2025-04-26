@@ -78,9 +78,25 @@ public class UtilisateurRessource {
     @POST
     public Response ajouterUtilisateur(
             @Parameter(description = "Utilisateur à ajouter", required = true) Utilisateur utilisateur) {
-        userDao.save(utilisateur);
+        userDao.save(utilisateur); // or however you're saving
         return Response.status(Response.Status.CREATED)
-                .entity("Utilisateur ajouté avec succès")
+                .entity(utilisateur) // ✅ send the full user as JSON
                 .build();
+    }
+
+
+    @POST
+    @Path("/login")
+    @Consumes("application/json")
+    public Response login(Utilisateur credentials) {
+        Utilisateur utilisateur = userDao.findByEmail(credentials.getEmail());
+
+        if (utilisateur != null && utilisateur.getPassword().equals(credentials.getPassword())) {
+            return Response.ok(utilisateur).build(); // 💡 In production: return a token, not the full user
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Email ou mot de passe incorrect")
+                    .build();
+        }
     }
 }
