@@ -21,7 +21,7 @@ public class Utilisateur implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.CLIENT; // default role
+    private Role role ;
 
 
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL)

@@ -92,7 +92,7 @@ public class UtilisateurRessource {
         Utilisateur utilisateur = userDao.findByEmail(credentials.getEmail());
 
         if (utilisateur != null && utilisateur.getPassword().equals(credentials.getPassword())) {
-            return Response.ok(utilisateur).build(); // 💡 In production: return a token, not the full user
+            return Response.ok(utilisateur).build(); 
         } else {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("Email ou mot de passe incorrect")

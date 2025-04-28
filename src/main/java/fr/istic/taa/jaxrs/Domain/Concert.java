@@ -1,5 +1,6 @@
 package fr.istic.taa.jaxrs.Domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -21,7 +22,9 @@ public class Concert implements Serializable {
     private String genre;
     private double prix;
 
+
     @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Ticket> tickets;
 
 

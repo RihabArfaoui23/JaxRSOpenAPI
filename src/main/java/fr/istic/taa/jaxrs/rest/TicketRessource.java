@@ -1,6 +1,8 @@
 package fr.istic.taa.jaxrs.rest;
 
+import fr.istic.taa.jaxrs.Domain.Concert;
 import fr.istic.taa.jaxrs.Domain.Ticket;
+import fr.istic.taa.jaxrs.dao.DomainDAO.ConcertDao;
 import fr.istic.taa.jaxrs.dao.DomainDAO.TicketDao;
 import fr.istic.taa.jaxrs.DTO.TicketDTO;
 import fr.istic.taa.jaxrs.mapper.TicketMapper;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class TicketRessource {
 
     private final TicketDao ticketDao = new TicketDao();
+    private final ConcertDao concertDao = new ConcertDao();
 
     /**
      * Récupérer un ticket par son ID.
@@ -110,4 +113,56 @@ public class TicketRessource {
                 .entity("Ticket ajouté avec succès")
                 .build();
     }
+    @POST
+    @Path("/generate")
+    @Produces(MediaType.APPLICATION_JSON)  // Ensures the response is returned as JSON
+    public Response generateTickets(
+            @QueryParam("concertId") Long concertId,
+            @QueryParam("number") int number,
+            @QueryParam("price") double price) {
+
+        Concert concert = concertDao.findOne(concertId);
+
+        if (concert == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"message\": \"Concert not found\"}")
+                    .build();
+        }
+
+        if (number <= 0 || price <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Invalid number or price\"}")
+                    .build();
+        }
+
+        // Generate the tickets
+        for (int i = 0; i < number; i++) {
+            Ticket newTicket = new Ticket(price, concert, null);  // Assuming null for the user for now
+            ticketDao.save(newTicket);
+        }
+
+        return Response.status(Response.Status.CREATED)
+                .entity("{\"message\": \"Tickets generated successfully\"}")
+                .build();
+    }
+
+
+    @POST
+    @Path("/buy/{ticketId}")
+    @Produces(MediaType.APPLICATION_JSON)  // Ensure it returns JSON or a compatible format
+    public Response acheterTicket(@PathParam("ticketId") Long ticketId) {
+        Ticket ticket = ticketDao.findOne(ticketId);
+        if (ticket != null && !ticket.isEstUtilise()) {
+            ticket.setEstUtilise(true);
+            ticketDao.update(ticket);
+            return Response.ok("{\"message\": \"Ticket acheté avec succès\"}").build();  // Return a JSON response
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Ticket non disponible\"}")  // Ensure response is JSON
+                    .build();
+        }
+    }
+
+
+
 }
